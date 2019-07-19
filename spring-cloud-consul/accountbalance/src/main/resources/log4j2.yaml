@@ -1,0 +1,42 @@
+# logger cofig
+
+Configutation:
+  name: Default
+  status: warn
+
+  Appenders:
+
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{2} - %msg%n"
+
+    RollingFile:
+      name: RollingFile_Appender
+      fileName: logs/accountbalance.log
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{2} - %msg%n"
+      filePattern: logs/accountbalance_%d{dd-MM-yyyy}.log
+      Policies:
+        TimeBasedTriggeringPolicy:
+          modulate: false
+
+  Loggers:
+
+    Root:
+      level: error
+      additivity: false
+      AppenderRef:
+        - ref: Console_Appender
+        - ref: RollingFile_Appender
+
+    Logger:
+      - name: com.manmohanp.accountbalance
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: Console_Appender
+          - ref: RollingFile_Appender
+
+# logger config - end

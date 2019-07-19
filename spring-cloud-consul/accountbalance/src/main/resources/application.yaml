@@ -1,0 +1,82 @@
+server:
+  address: ${HOST}
+  port: ${PORT}
+  #servlet:
+    #context-path: /accountbalance
+
+spring:
+  application:
+    name: accountbalance
+  profiles:
+    active: dev
+    #main:
+    #banner-mode: 'off'
+
+  # Consul
+  cloud:
+    bus:
+      enabled: true
+    consul:
+      enabled: true
+      host: ${consul.agent.host}
+      port: ${consul.agent.port}
+      discovery:
+        register: true
+        preferIpAddress: true #for local setup with multiple ip, else should use dns
+        ipAddress: ${HOST} #for local setup with multiple ip, else should use dns
+        port: ${PORT} #for local setup with multiple ip, else should use dns
+        registerHealthCheck: true
+        healthCheckCriticalTimeout: 5m
+        instanceId: ${spring.application.name}:${random.value}
+        #hostname: localhost
+        healthCheckPath: /actuator/info
+        #healthCheckInterval: 5s
+  # Consul - end
+
+thread-pool: 10
+
+# actuator configuration
+info:
+  app:
+    name: AccountBalance Service
+    description: AccountBalance service
+    version: 1.0.0
+
+endpoints:
+  health:
+    sensitive: false
+    restart:
+      enabled: true
+    shutdown:
+      enabled: true
+management:
+  security:
+    enabled: false
+# actuator configuration - end
+
+
+# API Documentation
+documentation:
+  title: AccountBalance REST API with Swagger
+  description: AccountBalance REST API with Swagger
+
+####
+
+# Hysterix
+hystrix:
+  command:
+    accountBalanceService:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500
+            interruptOnTimeout: true
+      fallback:
+        enabled: false
+      circuitBreaker:
+        enabled: true
+        sleepWindowInMilliseconds: 30000
+        requestVolumeThreshold: 5
+        errorThresholdPercentage: 50
+
+# Hysterix - end
